@@ -67,7 +67,6 @@ static NSString * const reuseIdentifier = @"imageCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
     [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
     
     [self setUpBorders];
@@ -114,7 +113,9 @@ static NSString * const reuseIdentifier = @"imageCell";
         }];
     }];
     
-    
+    [[self.getButton rac_signalForControlEvents:UIControlEventTouchUpInside]subscribeNext:^(id x) {
+        [self showAlertAndValidateData];
+    }];
 }
 
 - (void)setUpBorders{
@@ -133,14 +134,9 @@ static NSString * const reuseIdentifier = @"imageCell";
     self.getButton.layer.borderWidth = 2;
     self.getButton.layer.borderColor = [[UIColor whiteColor] CGColor];
     
-    
-    [[self.getButton rac_signalForControlEvents:UIControlEventTouchUpInside]subscribeNext:^(id x) {
-        [self showAlertAndValidateData];
-    }];
 }
 
 - (void)showAlertAndValidateData{
-    
     UIAlertController *alertController = [UIAlertController
                                           alertControllerWithTitle:@"Apple ID"
                                           message:@"Please enter your email and password"
@@ -192,7 +188,6 @@ static NSString * const reuseIdentifier = @"imageCell";
     [[RACSignal combineLatest:(@[emailSignal,passwordSignal])]subscribeNext:^(NSNumber* x) {
         okAction.enabled = YES;
     }];
-    
 }
 
 - (void)initUserInterface{
