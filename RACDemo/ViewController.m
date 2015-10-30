@@ -166,28 +166,26 @@ static NSString * const reuseIdentifier = @"imageCell";
     
     [self presentViewController:alertController animated:YES completion:nil];
     
-    RACSignal *emailSignal = [alertController.textFields.firstObject.rac_textSignal filter:^BOOL(id value) {
-        NSRegularExpression *regex = [NSRegularExpression
-                                      regularExpressionWithPattern:@"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$"
-                                      options:NSRegularExpressionCaseInsensitive
-                                      error:NULL];
-        NSTextCheckingResult *match = [regex firstMatchInString:((NSString*)value) options:0 range:NSMakeRange(0, [((NSString*)value) length])];
-        return match ? YES : NO;
+    RACSignal *emailSignal = [alertController.textFields.firstObject.rac_textSignal filter:^BOOL(NSString* value) {
+        return  [self validateStrin:value withPattern:@"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$"];
     }];
     
-    RACSignal *passwordSignal =[alertController.textFields.lastObject.rac_textSignal filter:^BOOL(id value) {
-        NSRegularExpression *regex = [NSRegularExpression
-                                      regularExpressionWithPattern:@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$"
-                                      options:NSRegularExpressionCaseInsensitive
-                                      error:NULL];
-        NSTextCheckingResult *match = [regex firstMatchInString:((NSString*)value) options:0 range:NSMakeRange(0, [((NSString*)value) length])];
-        return match ? YES : NO;
-    }
-    ];
+    RACSignal *passwordSignal =[alertController.textFields.lastObject.rac_textSignal filter:^BOOL(NSString* value) {
+        return  [self validateStrin:value withPattern:@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$"];
+    }];
     
     [[RACSignal combineLatest:(@[emailSignal,passwordSignal])]subscribeNext:^(NSNumber* x) {
         okAction.enabled = YES;
     }];
+}
+
+- (BOOL)validateStrin:(NSString*)email withPattern:(NSString*)pattern{
+    NSRegularExpression *regex = [NSRegularExpression
+                                  regularExpressionWithPattern:pattern
+                                  options:NSRegularExpressionCaseInsensitive
+                                  error:NULL];
+    NSTextCheckingResult *match = [regex firstMatchInString:email options:0 range:NSMakeRange(0, [email length])];
+    return match ? YES : NO;
 }
 
 - (void)initUserInterface{
