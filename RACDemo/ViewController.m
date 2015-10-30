@@ -167,11 +167,11 @@ static NSString * const reuseIdentifier = @"imageCell";
     [self presentViewController:alertController animated:YES completion:nil];
     
     RACSignal *emailSignal = [alertController.textFields.firstObject.rac_textSignal filter:^BOOL(NSString* value) {
-        return  [self validateStrin:value withPattern:@"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$"];
+        return  [self validateString:value withPattern:@"^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$"];
     }];
     
     RACSignal *passwordSignal =[alertController.textFields.lastObject.rac_textSignal filter:^BOOL(NSString* value) {
-        return  [self validateStrin:value withPattern:@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$"];
+        return  [self validateString:value withPattern:@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$"];
     }];
     
     [[RACSignal combineLatest:(@[emailSignal,passwordSignal])]subscribeNext:^(NSNumber* x) {
@@ -179,7 +179,7 @@ static NSString * const reuseIdentifier = @"imageCell";
     }];
 }
 
-- (BOOL)validateStrin:(NSString*)email withPattern:(NSString*)pattern{
+- (BOOL)validateString:(NSString*)email withPattern:(NSString*)pattern{
     NSRegularExpression *regex = [NSRegularExpression
                                   regularExpressionWithPattern:pattern
                                   options:NSRegularExpressionCaseInsensitive
