@@ -73,33 +73,39 @@ static NSString * const reuseIdentifier = @"imageCell";
         
     self.urls = @[@"limbo1.jpg",@"limbo2.jpg",@"limbo3.jpg",@"limbo4.jpg",@"limbo5.jpg"];
 
+    @weakify(self);
     RACSignal *topRecieved = [[DownloadManager sharedManager]getInfoWithQuerry:@"topviewdata.json"];
     [topRecieved subscribeNext:^(NSDictionary *topDict) {
         NSLog(@"%@",topDict);
+        @strongify(self);
         self.topDictionary = topDict;
     }];
     
     RACSignal *supportRecieved = [[DownloadManager sharedManager]getInfoWithQuerry:@"supportviewdata.json"];
     [supportRecieved subscribeNext:^(NSDictionary *supportDict) {
         NSLog(@"%@",supportDict);
+        @strongify(self);
         self.support = [supportDict valueForKey:@"support"];
     }];
     
     RACSignal *descriptionRecieved = [[DownloadManager sharedManager]getInfoWithQuerry:@"descriptionviewdata.json"];
     [descriptionRecieved subscribeNext:^(NSDictionary *descrDict) {
         NSLog(@"%@",descrDict);
+        @strongify(self);
         self.descr = [descrDict valueForKey:@"description"];
     }];
     
     RACSignal *InfoRecieved = [[DownloadManager sharedManager]getInfoWithQuerry:@"infoviewdata.json"];
     [InfoRecieved subscribeNext:^(NSDictionary *infoDict) {
         NSLog(@"%@",infoDict);
+        @strongify(self);
         self.infoDictionary = infoDict;
     }];
     
     RACSignal *logoRecieved = [[DownloadManager sharedManager]getInfoWithQuerry:@"logo.png"];
     [logoRecieved subscribeNext:^(UIImage *logo) {
         NSLog(@"logo");
+        @strongify(self);
         self.logo = logo;
     }];
     
@@ -108,6 +114,7 @@ static NSString * const reuseIdentifier = @"imageCell";
         [self initUserInterface];
     }completed:^{
         [[[[DownloadManager sharedManager]getPictureCollection:self.urls] deliverOn:[RACScheduler mainThreadScheduler]]subscribeNext:^(NSMutableArray<UIImage*> *images) {
+            @strongify(self);
             self.imageCollection = images;
             [self.collectionView reloadData];
         }];
